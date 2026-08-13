@@ -1,0 +1,50 @@
+{
+  "name": "kumar-gifts-and-toys",
+  "version": "1.0.0",
+  "description": "Premium E-Commerce Platform for Kumar Gifts & Toys in Ongole, AP",
+  "main": "server/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k -p \"[{name}]\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run server\" \"npm run client\"",
+    "server": "nodemon server/index.js",
+    "client": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "ecommerce",
+    "gift-shop",
+    "personalized-gifts",
+    "toys",
+    "ongole"
+  ],
+  "author": "Kumar Gifts & Toys",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "canvas-confetti": "^1.9.4",
+    "clsx": "^2.1.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.6.2",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "lucide-react": "^1.31.0",
+    "multer": "^2.2.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "sqlite3": "^6.0.1",
+    "tailwind-merge": "^3.6.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@vitejs/plugin-react": "^6.0.5",
+    "autoprefixer": "^10.5.4",
+    "concurrently": "^10.0.4",
+    "nodemon": "^3.1.14",
+    "postcss": "^8.5.26",
+    "tailwindcss": "^4.3.3",
+    "vite": "^8.2.1"
+  }
+}

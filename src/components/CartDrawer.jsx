@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Trash2, ShoppingBag, Sparkles, ArrowRight, Tag, ShieldCheck } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { getImageUrl } from '../config/api';
 
 export default function CartDrawer({ onProceedToCheckout }) {
   const {
@@ -84,80 +85,85 @@ export default function CartDrawer({ onProceedToCheckout }) {
                 </button>
               </div>
             ) : (
-              cartItems.map((item) => (
-                <div 
-                  key={item.cartItemId}
-                  className="bg-slate-50 dark:bg-slate-800/80 rounded-2xl p-3 border border-slate-200/60 dark:border-slate-700/60 flex gap-3 relative group"
-                >
-                  <img
-                    src={item.customization?.uploadedImageUrl || item.primary_image || item.images?.[0]?.image_url || '/images/custom_mug.png'}
-                    alt={item.title}
-                    className="w-20 h-20 rounded-xl object-cover border border-slate-200 dark:border-slate-700"
-                  />
+              cartItems.map((item) => {
+                const rawImg = item.customization?.uploadedImageUrl || item.primary_image || item.images?.[0]?.image_url || '/images/custom_mug.png';
+                const displayImg = getImageUrl(rawImg);
 
-                  <div className="flex-1 flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-start justify-between gap-1">
-                        <h4 className="font-bold text-slate-800 dark:text-slate-100 text-xs sm:text-sm line-clamp-1">
-                          {item.title}
-                        </h4>
-                        <button
-                          onClick={() => removeFromCart(item.cartItemId)}
-                          className="text-slate-400 hover:text-rose-600 transition-colors p-1"
-                          title="Remove"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
+                return (
+                  <div 
+                    key={item.cartItemId}
+                    className="bg-slate-50 dark:bg-slate-800/80 rounded-2xl p-3 border border-slate-200/60 dark:border-slate-700/60 flex gap-3 relative group"
+                  >
+                    <img
+                      src={displayImg}
+                      alt={item.title}
+                      className="w-20 h-20 rounded-xl object-cover border border-slate-200 dark:border-slate-700"
+                    />
 
-                      {/* Variant & Custom Specs */}
-                      {item.variant && (
-                        <span className="text-[10px] text-slate-500 font-medium block">
-                          Variant: {item.variant.variant_value}
-                        </span>
-                      )}
-
-                      {item.customization && (
-                        <div className="mt-1 bg-amber-50/80 dark:bg-amber-900/20 p-1.5 rounded-lg text-[10px] border border-amber-200/50 dark:border-amber-800/30">
-                          <span className="font-bold text-amber-700 dark:text-amber-300 flex items-center gap-1">
-                            <Sparkles className="w-3 h-3" /> Customization Specs:
-                          </span>
-                          {item.customization.customText && (
-                            <p className="text-slate-600 dark:text-slate-300 truncate">
-                              "{item.customization.customText}"
-                            </p>
-                          )}
+                    <div className="flex-1 flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-start justify-between gap-1">
+                          <h4 className="font-bold text-slate-800 dark:text-slate-100 text-xs sm:text-sm line-clamp-1">
+                            {item.title}
+                          </h4>
+                          <button
+                            onClick={() => removeFromCart(item.cartItemId)}
+                            className="text-slate-400 hover:text-rose-600 transition-colors p-1"
+                            title="Remove"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
                         </div>
-                      )}
-                    </div>
 
-                    {/* Quantity & Price */}
-                    <div className="flex items-center justify-between mt-2 pt-1 border-t border-slate-200/50 dark:border-slate-700/50">
-                      <div className="flex items-center border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 overflow-hidden">
-                        <button
-                          onClick={() => updateQuantity(item.cartItemId, item.quantity - 1)}
-                          className="px-2 py-0.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                        >
-                          -
-                        </button>
-                        <span className="px-2 text-xs font-bold text-slate-800 dark:text-white">
-                          {item.quantity}
-                        </span>
-                        <button
-                          onClick={() => updateQuantity(item.cartItemId, item.quantity + 1)}
-                          className="px-2 py-0.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                        >
-                          +
-                        </button>
+                        {/* Variant & Custom Specs */}
+                        {item.variant && (
+                          <span className="text-[10px] text-slate-500 font-medium block">
+                            Variant: {item.variant.variant_value}
+                          </span>
+                        )}
+
+                        {item.customization && (
+                          <div className="mt-1 bg-amber-50/80 dark:bg-amber-900/20 p-1.5 rounded-lg text-[10px] border border-amber-200/50 dark:border-amber-800/30">
+                            <span className="font-bold text-amber-700 dark:text-amber-300 flex items-center gap-1">
+                              <Sparkles className="w-3 h-3" /> Customization Specs:
+                            </span>
+                            {item.customization.customText && (
+                              <p className="text-slate-600 dark:text-slate-300 truncate">
+                                "{item.customization.customText}"
+                              </p>
+                            )}
+                          </div>
+                        )}
                       </div>
 
-                      <span className="font-extrabold text-sm text-slate-900 dark:text-white">
-                        ₹{((item.discount_price || item.price) + (item.variant?.extra_price || 0)) * item.quantity}
-                      </span>
+                      {/* Quantity & Price */}
+                      <div className="flex items-center justify-between mt-2 pt-1 border-t border-slate-200/50 dark:border-slate-700/50">
+                        <div className="flex items-center border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 overflow-hidden">
+                          <button
+                            onClick={() => updateQuantity(item.cartItemId, item.quantity - 1)}
+                            className="px-2 py-0.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                          >
+                            -
+                          </button>
+                          <span className="px-2 text-xs font-bold text-slate-800 dark:text-white">
+                            {item.quantity}
+                          </span>
+                          <button
+                            onClick={() => updateQuantity(item.cartItemId, item.quantity + 1)}
+                            className="px-2 py-0.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                          >
+                            +
+                          </button>
+                        </div>
+
+                        <span className="font-extrabold text-sm text-slate-900 dark:text-white">
+                          ₹{((item.discount_price || item.price) + (item.variant?.extra_price || 0)) * item.quantity}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
 

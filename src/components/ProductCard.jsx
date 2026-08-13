@@ -2,6 +2,7 @@ import React from 'react';
 import { Heart, ShoppingBag, Sparkles, Star } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { getImageUrl } from '../config/api';
 
 export default function ProductCard({ product, onOpenCustomizer, onClickProduct }) {
   const { addToCart } = useCart();
@@ -11,6 +12,9 @@ export default function ProductCard({ product, onOpenCustomizer, onClickProduct 
   const discountPercent = product.price > product.discount_price 
     ? Math.round(((product.price - product.discount_price) / product.price) * 100) 
     : 0;
+
+  const rawImage = product.primary_image || product.images?.[0]?.image_url || '/images/custom_mug.png';
+  const displayImage = getImageUrl(rawImage);
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
@@ -34,7 +38,7 @@ export default function ProductCard({ product, onOpenCustomizer, onClickProduct 
       {/* Top Badges */}
       <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-amber-50/50 dark:bg-slate-900/50 mb-3">
         <img 
-          src={product.primary_image || product.images?.[0]?.image_url || '/images/custom_mug.png'} 
+          src={displayImage} 
           alt={product.title} 
           className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
           loading="lazy"

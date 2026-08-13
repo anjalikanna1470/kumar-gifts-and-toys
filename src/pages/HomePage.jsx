@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, ArrowRight, Star, Heart, ShieldCheck, Truck, Clock, Gift, Award, MapPin, Phone, MessageCircle } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
+import { getApiUrl, getImageUrl } from '../config/api';
 
 export default function HomePage({ onNavigate, onOpenCustomizer, onSelectProduct }) {
   const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -8,13 +9,13 @@ export default function HomePage({ onNavigate, onOpenCustomizer, onSelectProduct
 
   useEffect(() => {
     // Fetch featured products
-    fetch('/api/products?is_featured=1')
+    fetch(getApiUrl('/api/products?is_featured=1'))
       .then(res => res.json())
       .then(data => setFeaturedProducts(Array.isArray(data) ? data : []))
       .catch(() => setFeaturedProducts([]));
 
     // Fetch categories
-    fetch('/api/categories')
+    fetch(getApiUrl('/api/categories'))
       .then(res => res.json())
       .then(data => setCategories(Array.isArray(data) ? data : []))
       .catch(() => setCategories([]));
@@ -84,7 +85,7 @@ export default function HomePage({ onNavigate, onOpenCustomizer, onSelectProduct
           <div className="relative flex justify-center">
             <div className="relative w-full max-w-md aspect-4/3 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/20 group">
               <img
-                src="/images/hero_banner.png"
+                src={getImageUrl('/images/hero_banner.png')}
                 alt="Kumar Gifts & Toys Display"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
@@ -125,7 +126,7 @@ export default function HomePage({ onNavigate, onOpenCustomizer, onSelectProduct
             >
               <div className="w-24 h-24 rounded-full overflow-hidden bg-rose-50 dark:bg-slate-700 p-1 group-hover:scale-108 transition-transform duration-300">
                 <img
-                  src={cat.image_url || '/images/custom_mug.png'}
+                  src={getImageUrl(cat.image_url || '/images/custom_mug.png')}
                   alt={cat.name}
                   className="w-full h-full object-cover rounded-full"
                 />

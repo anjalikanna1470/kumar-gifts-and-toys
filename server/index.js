@@ -29,7 +29,26 @@ app.use(
 );
 
 // 2. CORS & Parser Middleware
-app.use(cors());
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:5000',
+  'https://anjalikanna1470.github.io',
+  'https://www.kumargiftsandtoys.in',
+  'https://kumargiftsandtoys.in',
+  process.env.CLIENT_ORIGIN
+].filter(Boolean);
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
+      callback(null, true);
+    } else {
+      callback(null, true); // Allow cross-origin requests for e-commerce store client
+    }
+  },
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -69,7 +88,7 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/admin', adminRoutes);
 
-// 6. Health Check (requirement 12)
+// 6. Health Check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
@@ -78,7 +97,7 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', store: 'Kumar Gifts & Toys API' });
 });
 
-// 7. Serve frontend dist in production
+// 7. Serve frontend dist in production (if running unified backend)
 const distPath = path.join(__dirname, '../dist');
 app.use(express.static(distPath));
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Star, Heart, ShoppingBag, Sparkles, Truck, ShieldCheck, RefreshCw, MessageSquare, Plus, Check } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { getApiUrl, getImageUrl } from '../config/api';
 
 export default function ProductDetailPage({ productIdOrSlug, onOpenCustomizer, onProceedToCheckout }) {
   const [product, setProduct] = useState(null);
@@ -17,7 +18,7 @@ export default function ProductDetailPage({ productIdOrSlug, onOpenCustomizer, o
 
   useEffect(() => {
     if (!productIdOrSlug) return;
-    fetch(`/api/products/${productIdOrSlug}`)
+    fetch(getApiUrl(`/api/products/${productIdOrSlug}`))
       .then(res => res.json())
       .then(data => {
         setProduct(data);
@@ -67,7 +68,7 @@ export default function ProductDetailPage({ productIdOrSlug, onOpenCustomizer, o
     e.preventDefault();
     if (!newReview.name || !newReview.comment) return;
 
-    fetch(`/api/reviews/product/${product.id}`, {
+    fetch(getApiUrl(`/api/reviews/product/${product.id}`), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -93,7 +94,7 @@ export default function ProductDetailPage({ productIdOrSlug, onOpenCustomizer, o
         <div className="space-y-4">
           <div className="relative aspect-square w-full rounded-3xl overflow-hidden bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700 shadow-md group">
             <img
-              src={activeImage}
+              src={getImageUrl(activeImage)}
               alt={product.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
@@ -123,7 +124,7 @@ export default function ProductDetailPage({ productIdOrSlug, onOpenCustomizer, o
                     activeImage === img.image_url ? 'border-rose-600 ring-2 ring-rose-500/20' : 'border-slate-200 dark:border-slate-700'
                   }`}
                 >
-                  <img src={img.image_url} alt="" className="w-full h-full object-cover" />
+                  <img src={getImageUrl(img.image_url)} alt="" className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Filter, SlidersHorizontal, Search, Sparkles, RefreshCw } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
+import { getApiUrl } from '../config/api';
 
 export default function ShopPage({ initialCategory, initialOccasion, onOpenCustomizer, onSelectProduct }) {
   const [products, setProducts] = useState([]);
@@ -16,7 +17,7 @@ export default function ShopPage({ initialCategory, initialOccasion, onOpenCusto
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    fetch('/api/categories')
+    fetch(getApiUrl('/api/categories'))
       .then(res => res.json())
       .then(data => setCategories(Array.isArray(data) ? data : []));
   }, []);
@@ -27,13 +28,13 @@ export default function ShopPage({ initialCategory, initialOccasion, onOpenCusto
 
   const fetchProducts = () => {
     setLoading(true);
-    let url = `/api/products?max_price=${priceRange}&sort=${sortBy}`;
-    if (selectedCategory) url += `&category=${encodeURIComponent(selectedCategory)}`;
-    if (selectedOccasion) url += `&occasion=${encodeURIComponent(selectedOccasion)}`;
-    if (customizableOnly) url += `&is_customizable=1`;
-    if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
+    let path = `/api/products?max_price=${priceRange}&sort=${sortBy}`;
+    if (selectedCategory) path += `&category=${encodeURIComponent(selectedCategory)}`;
+    if (selectedOccasion) path += `&occasion=${encodeURIComponent(selectedOccasion)}`;
+    if (customizableOnly) path += `&is_customizable=1`;
+    if (searchQuery) path += `&search=${encodeURIComponent(searchQuery)}`;
 
-    fetch(url)
+    fetch(getApiUrl(path))
       .then(res => res.json())
       .then(data => setProducts(Array.isArray(data) ? data : []))
       .catch(() => setProducts([]))

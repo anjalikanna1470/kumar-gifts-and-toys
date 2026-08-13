@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { getApiUrl } from '../config/api';
 
 const AuthContext = createContext();
 
@@ -14,8 +15,7 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     if (token) {
-      // Verify token with backend
-      fetch('/api/auth/me', {
+      fetch(getApiUrl('/api/auth/me'), {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(res => res.ok ? res.json() : Promise.reject())

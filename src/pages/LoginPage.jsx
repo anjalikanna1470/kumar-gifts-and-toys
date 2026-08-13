@@ -1,34 +1,35 @@
 import React, { useState } from 'react';
-import { User, Lock, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Mail, Lock, User, Phone, ArrowRight, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { getApiUrl } from '../config/api';
 
 export default function LoginPage({ onNavigate }) {
-  const [isRegistering, setIsRegistering] = useState(false);
+  const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const { login } = useAuth();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
+    setSubmitting(true);
 
-    const endpoint = isRegistering ? '/api/auth/register' : '/api/auth/login';
-    const payload = isRegistering ? { name, email, phone, password } : { email, password };
+    const endpoint = isRegister ? '/api/auth/register' : '/api/auth/login';
+    const payload = isRegister ? { name, email, phone, password } : { email, password };
 
-    fetch(endpoint, {
+    fetch(getApiUrl(endpoint), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     })
       .then(res => res.json())
       .then(data => {
-        setLoading(false);
+        setSubmitting(false);
         if (data.token && data.user) {
           login(data.user, data.token);
           onNavigate('account');
@@ -37,7 +38,7 @@ export default function LoginPage({ onNavigate }) {
         }
       })
       .catch(() => {
-        setLoading(false);
+        setSubmitting(false);
         setError('Network error. Please try again.');
       });
   };
@@ -51,10 +52,12 @@ export default function LoginPage({ onNavigate }) {
             K
           </div>
           <h1 className="font-serif font-bold text-2xl text-slate-900 dark:text-white">
-            {isRegistering ? 'Create Customer Account' : 'Welcome Back'}
+            {isRegister ? 'Create Customer Account' : 'Welcome Back'}
           </h1>
           <p className="text-xs text-slate-400">
-            {isRegistering ? 'Sign up to track custom orders & fast checkout in Ongole' : 'Login to manage your gift orders & wishlist'}
+            {isRegister
+              ? 'Sign up to track custom orders & fast checkout in Ongole'
+              : 'Login to manage your gift orders & wishlist'}
           </p>
         </div>
 
@@ -65,7 +68,7 @@ export default function LoginPage({ onNavigate }) {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
-          {isRegistering && (
+          {isRegister && (
             <div>
               <label className="font-semibold text-slate-700 dark:text-slate-300">Full Name</label>
               <input
@@ -91,7 +94,7 @@ export default function LoginPage({ onNavigate }) {
             />
           </div>
 
-          {isRegistering && (
+          {isRegister && (
             <div>
               <label className="font-semibold text-slate-700 dark:text-slate-300">Mobile Number</label>
               <input
@@ -118,19 +121,19 @@ export default function LoginPage({ onNavigate }) {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={submitting}
             className="w-full py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2"
           >
-            {loading ? 'Processing...' : isRegistering ? 'Register Account' : 'Login Now'} <ArrowRight className="w-4 h-4" />
+            {submitting ? 'Processing...' : isRegister ? 'Register Account' : 'Login Now'} <ArrowRight className="w-4 h-4" />
           </button>
         </form>
 
         <div className="pt-4 border-t border-slate-100 dark:border-slate-700 text-center text-xs">
           <button
-            onClick={() => setIsRegistering(!isRegistering)}
+            onClick={() => setIsRegister(!isRegister)}
             className="text-rose-600 dark:text-rose-400 font-bold hover:underline"
           >
-            {isRegistering ? 'Already have an account? Login' : "Don't have an account? Sign Up"}
+            {isRegister ? 'Already have an account? Login' : "Don't have an account? Sign Up"}
           </button>
         </div>
 

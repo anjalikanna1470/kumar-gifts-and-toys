@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { LayoutDashboard, ShoppingBag, Package, Users, Sparkles, AlertTriangle, Plus, Edit, Trash2, CheckCircle2, Upload, RefreshCw, Eye } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { getApiUrl, getImageUrl } from '../config/api';
 
 export default function AdminDashboardPage({ onNavigate }) {
   const { token, isAdmin } = useAuth();
@@ -43,12 +44,12 @@ export default function AdminDashboardPage({ onNavigate }) {
     const headers = { Authorization: `Bearer ${token}` };
 
     Promise.all([
-      fetch('/api/admin/dashboard-stats', { headers }).then(r => r.json()),
-      fetch('/api/products').then(r => r.json()),
-      fetch('/api/orders/admin/all', { headers }).then(r => r.json()),
-      fetch('/api/custom-orders/admin/list', { headers }).then(r => r.json()),
-      fetch('/api/admin/customers', { headers }).then(r => r.json()),
-      fetch('/api/categories').then(r => r.json()),
+      fetch(getApiUrl('/api/admin/dashboard-stats'), { headers }).then(r => r.json()),
+      fetch(getApiUrl('/api/products')).then(r => r.json()),
+      fetch(getApiUrl('/api/orders/admin/all'), { headers }).then(r => r.json()),
+      fetch(getApiUrl('/api/custom-orders/admin/list'), { headers }).then(r => r.json()),
+      fetch(getApiUrl('/api/admin/customers'), { headers }).then(r => r.json()),
+      fetch(getApiUrl('/api/categories')).then(r => r.json()),
     ])
       .then(([statsData, prodData, orderData, customData, custData, catData]) => {
         setStats(statsData);
@@ -63,7 +64,7 @@ export default function AdminDashboardPage({ onNavigate }) {
   };
 
   const handleUpdateOrderStatus = (orderId, newStatus) => {
-    fetch(`/api/orders/admin/status/${orderId}`, {
+    fetch(getApiUrl(`/api/orders/admin/status/${orderId}`), {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -82,7 +83,7 @@ export default function AdminDashboardPage({ onNavigate }) {
     const formData = new FormData();
     formData.append('image', files[0]);
 
-    fetch('/api/upload/single', {
+    fetch(getApiUrl('/api/upload/single'), {
       method: 'POST',
       body: formData
     })
@@ -98,7 +99,7 @@ export default function AdminDashboardPage({ onNavigate }) {
     e.preventDefault();
     if (!newProduct.title || !newProduct.price) return;
 
-    fetch('/api/products', {
+    fetch(getApiUrl('/api/products'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -120,7 +121,7 @@ export default function AdminDashboardPage({ onNavigate }) {
 
   const handleDeleteProduct = (id) => {
     if (!confirm('Are you sure you want to delete this product?')) return;
-    fetch(`/api/products/${id}`, {
+    fetch(getApiUrl(`/api/products/${id}`), {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
     })
@@ -264,8 +265,8 @@ export default function AdminDashboardPage({ onNavigate }) {
 
                     <div className="flex items-center gap-3">
                       {co.uploaded_image_url ? (
-                        <a href={co.uploaded_image_url} target="_blank" rel="noopener noreferrer" className="group relative">
-                          <img src={co.uploaded_image_url} alt="" className="w-20 h-20 rounded-xl object-cover border border-slate-300" />
+                        <a href={getImageUrl(co.uploaded_image_url)} target="_blank" rel="noopener noreferrer" className="group relative">
+                          <img src={getImageUrl(co.uploaded_image_url)} alt="" className="w-20 h-20 rounded-xl object-cover border border-slate-300" />
                           <span className="text-[9px] bg-slate-900 text-white px-1 rounded absolute bottom-1 right-1">Click High-Res</span>
                         </a>
                       ) : (
@@ -337,7 +338,7 @@ export default function AdminDashboardPage({ onNavigate }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {products.map(p => (
               <div key={p.id} className="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 flex gap-3">
-                <img src={p.primary_image || '/images/custom_mug.png'} alt="" className="w-16 h-16 rounded-xl object-cover" />
+                <img src={getImageUrl(p.primary_image || '/images/custom_mug.png')} alt="" className="w-16 h-16 rounded-xl object-cover" />
                 <div className="flex-1 space-y-1">
                   <h4 className="font-bold text-xs line-clamp-1">{p.title}</h4>
                   <p className="text-[10px] text-slate-400">Stock: {p.stock} | Price: ₹{p.discount_price || p.price}</p>

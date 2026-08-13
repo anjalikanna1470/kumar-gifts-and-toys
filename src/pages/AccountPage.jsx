@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { User, Package, Heart, MapPin, LogOut, Lock, Edit } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useWishlist } from '../context/WishlistContext';
+import { getApiUrl, getImageUrl } from '../config/api';
 
 export default function AccountPage({ onNavigate }) {
   const { user, logout, token } = useAuth();
@@ -17,7 +18,7 @@ export default function AccountPage({ onNavigate }) {
   useEffect(() => {
     if (token) {
       setLoadingOrders(true);
-      fetch('/api/orders/my-orders', {
+      fetch(getApiUrl('/api/orders/my-orders'), {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(res => res.json())
@@ -29,7 +30,7 @@ export default function AccountPage({ onNavigate }) {
 
   const handleUpdateProfile = (e) => {
     e.preventDefault();
-    fetch('/api/auth/profile', {
+    fetch(getApiUrl('/api/auth/profile'), {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -162,7 +163,7 @@ export default function AccountPage({ onNavigate }) {
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   {wishlist.map(p => (
                     <div key={p.id} className="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 text-xs text-center space-y-2">
-                      <img src={p.primary_image || '/images/custom_mug.png'} alt="" className="w-full aspect-square object-cover rounded-lg" />
+                      <img src={getImageUrl(p.primary_image || '/images/custom_mug.png')} alt="" className="w-full aspect-square object-cover rounded-lg" />
                       <p className="font-bold truncate">{p.title}</p>
                       <p className="font-extrabold text-rose-600">₹{p.discount_price || p.price}</p>
                       <button onClick={() => onNavigate('product', { id: p.id })} className="w-full py-1.5 bg-rose-600 text-white font-bold text-[10px] rounded-lg">

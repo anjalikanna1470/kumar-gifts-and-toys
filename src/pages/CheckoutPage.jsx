@@ -3,6 +3,7 @@ import { MapPin, CreditCard, ShieldCheck, CheckCircle2, ArrowRight, Truck, QrCod
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import confetti from 'canvas-confetti';
+import { getApiUrl, getImageUrl } from '../config/api';
 
 export default function CheckoutPage({ onOrderCompleted, onNavigate }) {
   const { cartItems, subtotal, discountAmount, deliveryCharge, finalTotal, clearCart } = useCart();
@@ -32,7 +33,7 @@ export default function CheckoutPage({ onOrderCompleted, onNavigate }) {
 
     setIsSubmitting(true);
 
-    fetch('/api/orders', {
+    fetch(getApiUrl('/api/orders'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -259,7 +260,7 @@ export default function CheckoutPage({ onOrderCompleted, onNavigate }) {
           <div className="space-y-3 max-h-56 overflow-y-auto pr-1">
             {cartItems.map(item => (
               <div key={item.cartItemId} className="flex gap-2 text-xs">
-                <img src={item.customization?.uploadedImageUrl || item.primary_image || '/images/custom_mug.png'} alt="" className="w-10 h-10 rounded-lg object-cover" />
+                <img src={getImageUrl(item.customization?.uploadedImageUrl || item.primary_image || '/images/custom_mug.png')} alt="" className="w-10 h-10 rounded-lg object-cover" />
                 <div className="flex-1">
                   <p className="font-bold text-slate-800 dark:text-slate-200 line-clamp-1">{item.title}</p>
                   <p className="text-[10px] text-slate-400">Qty: {item.quantity} x ₹{item.discount_price || item.price}</p>

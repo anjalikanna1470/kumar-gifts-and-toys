@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, CheckCircle2, Clock, Truck, Package, Sparkles, MessageCircle, AlertCircle } from 'lucide-react';
+import { getApiUrl } from '../config/api';
 
 export default function OrderTrackingPage({ initialQuery }) {
   const [query, setQuery] = useState(initialQuery || '');
@@ -30,7 +31,7 @@ export default function OrderTrackingPage({ initialQuery }) {
 
     setLoading(true);
     setError('');
-    fetch(`/api/orders/track/${encodeURIComponent(q.trim())}`)
+    fetch(getApiUrl(`/api/orders/track/${encodeURIComponent(q.trim())}`))
       .then(res => res.json())
       .then(data => {
         if (data.id) {

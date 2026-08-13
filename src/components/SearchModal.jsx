@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, X, Sparkles, ArrowRight } from 'lucide-react';
 import ProductCard from './ProductCard';
+import { getApiUrl } from '../config/api';
 
 export default function SearchModal({ isOpen, onClose, onSelectProduct, onOpenCustomizer }) {
   const [query, setQuery] = useState('');
@@ -23,7 +24,7 @@ export default function SearchModal({ isOpen, onClose, onSelectProduct, onOpenCu
 
     setLoading(true);
     const timer = setTimeout(() => {
-      fetch(`/api/products?search=${encodeURIComponent(query)}`)
+      fetch(getApiUrl(`/api/products?search=${encodeURIComponent(query)}`))
         .then(res => res.json())
         .then(data => {
           setProducts(Array.isArray(data) ? data : []);
